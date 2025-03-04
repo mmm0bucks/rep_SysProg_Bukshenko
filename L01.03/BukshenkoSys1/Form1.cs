@@ -24,6 +24,7 @@ namespace BukshenkoSys1
         int threadsCounter = 0;
         public Form1()
         {
+
             InitializeComponent();
         }
 
@@ -88,5 +89,32 @@ namespace BukshenkoSys1
         {
             comboBox1.Items.Add(name);
         }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!(childProcess == null || childProcess.HasExited))
+            {
+                if (threadsCounter == 0)
+                {
+//                    listBox.Items.Clear();
+                    childProcess.Kill();
+                }
+                else
+                {
+                    eventExit.Set();
+                    if (eventConfirm.WaitOne())
+                    {
+  //                      listBox.Items.RemoveAt(listBox.Items.Count - 1);
+                        threadsCounter--;
+                    }
+                }
+            }
+            else
+            {
+    //            listBox.Items.Clear();
+                threadsCounter = 0;
+            }
+        }
+
     }
 }

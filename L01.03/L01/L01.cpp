@@ -97,7 +97,7 @@ public:
 DWORD WINAPI MyThread(LPVOID lpParameter)
 {
 	auto session = static_cast<Session*>(lpParameter);
-	SafeWrite("session", session->sessionID, "created");
+	SafeWrite(L"session", session->sessionID, L"created");
 	while (true)
 	{
 		Message m;
@@ -107,13 +107,13 @@ DWORD WINAPI MyThread(LPVOID lpParameter)
 			{
 				case MT_CLOSE:
 				{
-					SafeWrite("session", session->sessionID, "closed");
+					SafeWrite(L"session", session->sessionID, L"closed");
 					delete session;
 					return 0;
 				}
 				case MT_DATA:
 				{
-					SafeWrite("session", session->sessionID, "data", m.data);
+					SafeWrite(L"session", session->sessionID, L"data", m.data);
 					Sleep(1000 * session->sessionID);
 					break;
 				}
@@ -125,11 +125,10 @@ DWORD WINAPI MyThread(LPVOID lpParameter)
 
 int main()
 {
-	HANDLE confirmEvent = ::CreateEvent(NULL, FALSE, FALSE, "ConfirmEvent");
-	HANDLE startEvent = ::CreateEvent(NULL, FALSE, FALSE, "StartEvent");
-	HANDLE stopEvent = ::CreateEvent(NULL, FALSE, FALSE, "CloseProc");
-	HANDLE exitEvent = ::CreateEvent(NULL, FALSE, FALSE, "ExitProc");
-
+	HANDLE confirmEvent = ::CreateEvent(NULL, FALSE, FALSE, L"ConfirmEvent");
+	HANDLE startEvent = ::CreateEvent(NULL, FALSE, FALSE, L"StartEvent");
+	HANDLE stopEvent = ::CreateEvent(NULL, FALSE, FALSE, L"CloseProc");
+	HANDLE exitEvent = ::CreateEvent(NULL, FALSE, FALSE, L"ExitProc");
 
 	HANDLE events[3];
 	events[0] = startEvent;
@@ -146,12 +145,13 @@ int main()
 		DWORD dwWaitRes = ::WaitForMultipleObjects(sizeof(events) / sizeof(HANDLE), events, FALSE, INFINITE);
 		switch (dwWaitRes)
 		{
-		case WAIT_OBJECT_0:
+		case WAIT_OBJECT_0 + 2:
 			for (int i{ 0 }; i < sessions.size(); ++i)
 			{
 				sessions[i]->addMessage(MT_CLOSE);
 				CloseHandle(hThreads[i]);
 			}
+			::SetEvent(confirmEvent);
 			return 0;
 		case WAIT_OBJECT_0 + 1:
 
@@ -168,7 +168,7 @@ int main()
 
 			break;
 
-		case WAIT_OBJECT_0 + 2:
+		case WAIT_OBJECT_0:
 
 			sessions.push_back(new Session(hThreads.size()));
 			hThreads.push_back(::CreateThread(NULL, 0, MyThread, (LPVOID)sessions.back(), 0, NULL));

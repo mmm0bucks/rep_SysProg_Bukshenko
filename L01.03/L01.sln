@@ -5,6 +5,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "L01", "L01\L01.vcxproj", "{618F2D96-F759-4BCF-B64B-F95687A03D45}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BukshenkoSys1", "BukshenkoSys1\BukshenkoSys1.csproj", "{42B5CCF7-34FF-49A8-AF15-BA013D9716DB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{618F2D96-F759-4BCF-B64B-F95687A03D45} = {618F2D96-F759-4BCF-B64B-F95687A03D45}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
